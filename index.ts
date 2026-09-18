@@ -1,21 +1,33 @@
+import { db } from "./db"
+
 const srv = Bun.serve({
-    port: 1337,
+    port: 3000,
     routes: {
-        "/teste": {
-            GET: async (req) {
-                const url = new URL(requestAnimationFrame.url)
-                const search = url.searchParams
-                const nome = search.get('nome')
-                console.log(nome);
-                return new Response('Francisco GET')
+        "/user": {
+            GET: () => Response.json("", { status: 501 }),
+
+            POST: async (req) => {
+                const body = await req.body.json()
+                const query = db.query(`
+                    INSERT INTO users(username, email, password_hash)
+                    VALUES(:username, :email, :password_hash)
+                `)
+                const dbResp = query.run({
+                    ':username': body.username, 
+                    ':email': body.email, 
+                    ':password_hash': body.password
+                })
+                return Response.json({
+                    "message": "deu boa garote!",
+                    dbResp
+                })
             },
-            PUT: () => new Response('Francisco PUT'),
-            POST: async (req) {
-                const body = await req.body.text()
-                console.log(body);
-                return new Response('Francisco POST')  
-            },
-            DELETE: () => new Response('Francisco DELETE')
+        },
+
+        "/user/:id": {
+            GET: () => Response.json("", { status: 501 }),
+            PUT: () => Response.json("", { status: 501 }),
+            DELETE: () => Response.json("", { status: 501 }),
         }
     }
 })
