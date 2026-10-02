@@ -1,8 +1,11 @@
+import frontend from "./projeto/index.html"
 import { db } from "./db"
 
 const srv = Bun.serve({
     port: 1337,
     routes: {
+        "/": frontend,
+        
         "/user": {
             GET: () => {
                 const query = db.query(`SELECT * FROM users`)
@@ -128,3 +131,4 @@ const srv = Bun.serve({
         }
     }
 })
+console.log(`⚡ Servidor iniciado em ${srv.url}`);
